@@ -1,5 +1,10 @@
 package chapter1
 
+import (
+	"chapter1/lib"
+	"fmt"
+)
+
 // Calc opには+,-,×,÷の4つが渡ってくることを想定してxとyについて計算して返却(正常時はerrorはnilでよい)
 // 想定していないopが渡って来た時には0とerrorを返却
 func Calc(op string, x, y int) (int, error) {
@@ -9,8 +14,21 @@ func Calc(op string, x, y int) (int, error) {
 	// https://golang.org/pkg/fmt/#Errorf
 
 	// TODO Q1
-
-	return 0, nil
+	result := 0
+	var err error
+	switch op {
+	case "+":
+		result = x + y
+	case "-":
+		result = x - y
+	case "×":
+		result = x * y
+	case "÷":
+		result = x / y
+	default:
+		err = fmt.Errorf("invalid op=%s", op)
+	}
+	return result, err
 }
 
 // StringEncode 引数strの長さが5以下の時キャメルケースにして返却、それ以外であればスネークケースにして返却
@@ -19,16 +37,21 @@ func StringEncode(str string) string {
 	// chapter1/libのToCamelとToSnakeを使うこと
 
 	// TODO Q2
-
-	return ""
+	if len(str) <= 5 {
+		return lib.ToCamel(str)
+	}
+	return lib.ToSnake(str)
 }
 
 // Sqrt 数値xが与えられたときにz²が最もxに近い数値zを返却
 func Sqrt(x float64) float64 {
 
 	// TODO Q3
-
-	return 0
+	z := 1.0
+	for z < 0.00000000000005 {
+		z -= (z*z - x) / (2 * z)
+	}
+	return z
 }
 
 // Pyramid x段のピラミッドを文字列にして返却
