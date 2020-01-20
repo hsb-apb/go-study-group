@@ -28,7 +28,11 @@ func Calc(op string, x, y int) (int, error) {
 	case "×":
 		result = x * y
 	case "÷":
-		result = x / y
+		if y == 0 {
+			err = fmt.Errorf("integer divide by zero")
+		} else {
+			result = x / y
+		}
 	default:
 		err = fmt.Errorf("invalid op=%s", op)
 	}
