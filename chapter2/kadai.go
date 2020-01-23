@@ -13,24 +13,19 @@ func Calc(slice []int) (int, error) {
 	// fmt.Errorf(“invalid op=%s”, op) などでエラー内容を返却するのがよい
 	// https://golang.org/pkg/fmt/#Errorf
 
-	length := len(slice)
-	if length == 0 {
+	switch len(slice) {
+	case 0:
 		return 0, fmt.Errorf("slice length is zero")
-	}
-	if length == 1 {
+	case 1:
 		return slice[0], nil
-	}
-	if length == 2 {
+	case 2:
 		return slice[0] * slice[1], nil
 	}
-	if length >= 3 {
-		var ret int
-		for _, v := range slice {
-			ret += v
-		}
-		return ret, nil
+	var ret int
+	for _, v := range slice {
+		ret += v
 	}
-	return 0, nil
+	return ret, nil
 }
 
 type Number struct {
@@ -42,9 +37,7 @@ type Number struct {
 func Numbers() []Number {
 	// TODO Q2
 	ret := make([]Number, 0, 3)
-	ret = append(ret, Number{index: 1})
-	ret = append(ret, Number{index: 2})
-	ret = append(ret, Number{index: 3})
+	ret = append(ret, Number{index: 1}, Number{index: 2}, Number{index: 3})
 	return ret
 }
 
@@ -97,12 +90,11 @@ func Fibonacci() func() int {
 	// TODO Q6 オプション
 	list := make([]int, 0)
 	return func() int {
-		listLen := len(list)
-		if listLen == 0 {
+		switch len(list) {
+		case 0:
 			list = append(list, 0)
 			return 0
-		}
-		if listLen == 1 {
+		case 1:
 			list = append(list, 1)
 			return 1
 		}
