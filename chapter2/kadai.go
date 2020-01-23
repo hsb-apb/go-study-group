@@ -15,7 +15,7 @@ func Calc(slice []int) (int, error) {
 
 	length := len(slice)
 	if length == 0 {
-		return 0, fmt.Errorf("invalid slice length =%d", length)
+		return 0, fmt.Errorf("slice length is zero")
 	}
 	if length == 1 {
 		return slice[0], nil
@@ -41,16 +41,24 @@ type Number struct {
 // 3つの要素の中身は[{1} {2} {3}]とし、append関数を使用すること
 func Numbers() []Number {
 	// TODO Q2
-
-	return nil
+	ret := make([]Number, 0, 3)
+	ret = append(ret, Number{index: 1})
+	ret = append(ret, Number{index: 2})
+	ret = append(ret, Number{index: 3})
+	return ret
 }
 
 // 引数mをforで回し、「値」部分だけの和を返却
 // キーに「yon」が含まれる場合は、キー「yon」に関連する値は除外すること
 func CalcMap(m map[string]int) int {
 	// TODO Q3
-
-	return 0
+	var ret int
+	for key, value := range m {
+		if key != "yon" {
+			ret += value
+		}
+	}
+	return ret
 }
 
 type Model struct {
@@ -60,7 +68,9 @@ type Model struct {
 // 与えられたスライスのModel全てのValueに5を足す破壊的な関数を作成
 func Add(models []Model) {
 	// TODO  Q4
-
+	for i, _ := range models {
+		models[i].Value += 5
+	}
 }
 
 // 引数のスライスには重複な値が格納されているのでユニークな値のスライスに加工して返却
@@ -68,13 +78,38 @@ func Add(models []Model) {
 // ex) 引数:[]slice{21,21,4,5} 戻り値:[]int{21,4,5}
 func Unique(slice []int) []int {
 	// TODO Q5
-
-	return nil
+	ret := make([]int, 0)
+	uniqueMap := make(map[int]struct{})
+	for _, v := range slice {
+		_, ok := uniqueMap[v]
+		if ok {
+			// uniqueMapに含まれている
+			continue
+		}
+		ret = append(ret, v)
+		uniqueMap[v] = struct{}{}
+	}
+	return ret
 }
 
 // 連続するフィボナッチ数(0, 1, 1, 2, 3, 5, ...)を返す関数(クロージャ)を返却
 func Fibonacci() func() int {
 	// TODO Q6 オプション
-
-	return nil
+	list := make([]int, 0)
+	return func() int {
+		listLen := len(list)
+		if listLen == 0 {
+			list = append(list, 0)
+			return 0
+		}
+		if listLen == 1 {
+			list = append(list, 1)
+			return 1
+		}
+		ret := list[0] + list[1]
+		list = append(list, ret)
+		// 直近２つだけ見れたらいい → appendしたら前を詰める
+		list = list[1:]
+		return ret
+	}
 }
