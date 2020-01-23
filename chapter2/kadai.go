@@ -1,5 +1,7 @@
 package chapter2
 
+import "fmt"
+
 // 引数のスライスsliceの要素数が
 // 0の場合、0とエラー
 // 2以下の場合、要素を掛け算
@@ -11,6 +13,23 @@ func Calc(slice []int) (int, error) {
 	// fmt.Errorf(“invalid op=%s”, op) などでエラー内容を返却するのがよい
 	// https://golang.org/pkg/fmt/#Errorf
 
+	length := len(slice)
+	if length == 0 {
+		return 0, fmt.Errorf("invalid slice length =%d", length)
+	}
+	if length == 1 {
+		return slice[0], nil
+	}
+	if length == 2 {
+		return slice[0] * slice[1], nil
+	}
+	if length >= 3 {
+		var ret int
+		for _, v := range slice {
+			ret += v
+		}
+		return ret, nil
+	}
 	return 0, nil
 }
 
