@@ -1,5 +1,7 @@
 package chapter3
 
+import "fmt"
+
 // 課題5
 // とあるマスターデータのテーブルの構造をモデル化したstructを作りました。
 // idやnameを変更できないようにカプセル化し、Getterのみ実装しました。
@@ -19,4 +21,8 @@ func (m Master) ID() int {
 
 func (m Master) Name() string {
 	return m.name
+}
+
+func (m Master) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("{\"id\":%v, \"name\":\"%v\"}", m.id, m.name)), nil
 }
