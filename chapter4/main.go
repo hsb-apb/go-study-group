@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	"flag"
 	"fmt"
 	"os"
@@ -22,19 +23,22 @@ func main() {
 	if err != nil {
 		// Openエラー処理
 		fmt.Fprintln(os.Stderr, err)
-		os.Exit(2)
+		os.Exit(1)
 	}
 	defer fp.Close()
 
 	scanner := bufio.NewScanner(fp)
 
+	writer := csv.NewWriter(os.Stdout)
 	for scanner.Scan() {
 		slice := strings.Split(scanner.Text(), *delimiter)
 		for i, str := range slice {
 			if i == (*fields - 1) {
-				fmt.Println(str)
+				str = strings.Trim(str, " ")
+				writer.Write([]string{str})
 				break
 			}
 		}
 	}
+	writer.Flush()
 }
