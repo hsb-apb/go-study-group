@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/csv"
 	"flag"
 	"fmt"
 	"os"
@@ -29,13 +28,14 @@ func main() {
 
 	scanner := bufio.NewScanner(fp)
 
-	writer := csv.NewWriter(os.Stdout)
+	writer := bufio.NewWriter(os.Stdout)
 	for scanner.Scan() {
 		slice := strings.Split(scanner.Text(), *delimiter)
 		for i, str := range slice {
 			if i == (*fields - 1) {
 				str = strings.Trim(str, " ")
-				writer.Write([]string{str})
+				writer.WriteString(str)
+				writer.WriteRune('\n')
 				break
 			}
 		}
