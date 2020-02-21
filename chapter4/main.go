@@ -34,7 +34,6 @@ func main() {
 			if i == (*fields - 1) {
 				fmt.Println(str)
 			}
-			i++
 		}
 	}
 }
