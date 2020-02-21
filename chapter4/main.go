@@ -33,6 +33,7 @@ func main() {
 		for i, str := range slice {
 			if i == (*fields - 1) {
 				fmt.Println(str)
+				break
 			}
 		}
 	}
