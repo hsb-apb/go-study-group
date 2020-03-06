@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// kadai_baseのほうで定義されているからコッチではコメントアウトしておく
 // var delimiter = flag.String("d", ",", "区切り文字を指定してください")
 // var fields = flag.Int("f", 1, "フィールドの何番目を取り出すか指定してください")
 
@@ -24,16 +25,16 @@ func Validation(argCount int, fieldNum int) error {
 	return nil
 }
 
-func Cut(r io.Reader, w io.Writer, d string, num int) error {
+func Cut(r io.Reader, w io.Writer, delimiterStr string, fieldNum int) error {
 	scanner := bufio.NewScanner(r)
 	writer := bufio.NewWriter(w)
 	for scanner.Scan() {
 		text := scanner.Text()
-		sb := strings.Split(text, d)
-		if len(sb) <= num-1 {
+		sb := strings.Split(text, delimiterStr)
+		if len(sb) <= fieldNum-1 {
 			return fmt.Errorf("-fの値に該当するデータがありません")
 		}
-		s := sb[num-1]
+		s := sb[fieldNum-1]
 		fmt.Fprintln(writer, s)
 	}
 	writer.Flush()
