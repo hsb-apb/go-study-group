@@ -47,3 +47,12 @@ func TestCut(t *testing.T) {
 	})
 
 }
+
+func BenchmarkCut(b *testing.B) {
+	b.ResetTimer()
+	stdin := bytes.NewBufferString("foo,hogehoge,aaaaa\nfoo2,aabbcc,bbbbb")
+	stdout := new(bytes.Buffer)
+	for i := 0; i < b.N; i++ {
+		Cut(stdin, stdout, ",", 2)
+	}
+}

@@ -24,16 +24,16 @@ func Validation(argCount int, fieldNum int) error {
 	return nil
 }
 
-func Cut(r io.Reader, w io.Writer, d string, fieldNum int) error {
+func Cut(r io.Reader, w io.Writer, d string, num int) error {
 	scanner := bufio.NewScanner(r)
 	writer := bufio.NewWriter(w)
 	for scanner.Scan() {
 		text := scanner.Text()
 		sb := strings.Split(text, d)
-		if len(sb) < fieldNum-1 {
+		if len(sb) <= num-1 {
 			return fmt.Errorf("-fの値に該当するデータがありません")
 		}
-		s := sb[fieldNum-1]
+		s := sb[num-1]
 		fmt.Fprintln(writer, s)
 	}
 	writer.Flush()
@@ -45,7 +45,7 @@ func Cut(r io.Reader, w io.Writer, d string, fieldNum int) error {
 }
 
 // go-cutコマンドを実装しよう
-func cut2() {
+func GoCut() {
 	flag.Parse()
 
 	if err := Validation(flag.NArg(), *fields); err != nil {
