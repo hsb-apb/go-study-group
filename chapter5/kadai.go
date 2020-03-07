@@ -51,7 +51,6 @@ func GoCut() {
 
 	if err := Validation(flag.NArg(), *fields); err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 
 	file, err := os.Open(flag.Args()[0])
@@ -62,6 +61,5 @@ func GoCut() {
 
 	if err := Cut(file, os.Stdout, *delimiter, *fields); err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 }

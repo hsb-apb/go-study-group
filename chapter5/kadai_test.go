@@ -31,11 +31,10 @@ func TestCut(t *testing.T) {
 		t.Parallel()
 		stdin := bytes.NewBufferString("foo,hogehoge,aaaaa\nfoo2,aabbcc,bbbbb")
 		stdout := new(bytes.Buffer)
-		if err := Cut(stdin, stdout, ",", 2); err != nil {
-			t.Fail()
-		}
-		expected := []byte("hogehoge\naabbcc\n")
-		assert.Equal(t, expected, stdout.Bytes())
+		err := Cut(stdin, stdout, ",", 1)
+		assert.NoError(t, err)
+		expected := "hogehoge\naabbcc\n"
+		assert.Equal(t, expected, string(stdout.Bytes()))
 	})
 
 	t.Run("異常系１", func(t *testing.T) {
@@ -45,7 +44,6 @@ func TestCut(t *testing.T) {
 		err := Cut(stdin, stdout, ",", 4)
 		assert.EqualError(t, err, "-fの値に該当するデータがありません")
 	})
-
 }
 
 func BenchmarkCut(b *testing.B) {
