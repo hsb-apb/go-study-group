@@ -65,14 +65,6 @@ type UserItemService struct {
 
 func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...Reward) error {
 
-	// 接続先設定
-	// db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:5446)/chapter6?parseTime=true")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// アプリケーションが終了するときにCloseするように
-	defer u.db.Close()
-
 	// Transactionを開始
 	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelReadCommitted,
