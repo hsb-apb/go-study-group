@@ -63,7 +63,7 @@ type UserItemService struct {
 	userItemRepository IFUserItemRepository
 }
 
-func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...Reward) error {
+func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...Reward) (err error) {
 
 	// Transactionを開始
 	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{
@@ -74,8 +74,12 @@ func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...
 	}
 
 	defer func() {
-		if err := recover(); err != nil {
-			// panic時のロールバック
+		if panicErr := recover(); panicErr != nil {
+			// panic時エラーを詰め込む
+			err = fmt.Errorf("%+v", panicErr)
+		}
+		if err != nil {
+			// なにがしかのエラーが発生したときはここでロールバック
 			tx.Rollback()
 		}
 	}()
@@ -86,7 +90,6 @@ func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...
 	}
 	userItems, err := u.userItemRepository.FindByUserIdAndItemIDs(ctx, tx, userID, items)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -101,7 +104,6 @@ func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...
 			userItem.Count += reward.Count
 			_, err := u.userItemRepository.Update(ctx, tx, userItem)
 			if err != nil {
-				tx.Rollback()
 				return err
 			}
 		} else {
@@ -113,7 +115,6 @@ func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...
 			}
 			err := u.userItemRepository.Insert(ctx, tx, &userItem)
 			if err != nil {
-				tx.Rollback()
 				return err
 			}
 		}
@@ -121,7 +122,6 @@ func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...
 	}
 	// すべてうまく行ったらコミット
 	if err := tx.Commit(); err != nil {
-		tx.Rollback()
 		return err
 	}
 
