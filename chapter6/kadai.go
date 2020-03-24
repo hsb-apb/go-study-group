@@ -72,7 +72,13 @@ func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...
 	if err != nil {
 		return err
 	}
-	defer tx.Commit()
+
+	defer func() {
+		if err := recover(); err != nil {
+			// panic時のロールバック
+			tx.Rollback()
+		}
+	}()
 
 	items := make([]int64, len(rewards))
 	for i, reward := range rewards {
@@ -80,40 +86,45 @@ func (u *UserItemService) Provide(ctx context.Context, userID int64, rewards ...
 	}
 	userItems, err := u.userItemRepository.FindByUserIdAndItemIDs(ctx, tx, userID, items)
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
 
+	itemMap := make(map[int64]*IUserItem)
+	for _, userItem := range userItems {
+		itemMap[userItem.ItemID] = userItem
+	}
+
 	for _, reward := range rewards {
-		isUpdate := false
-		for _, userItem := range userItems {
-			if userItem.ItemID == reward.ItemID {
-				// 更新する
-				userItem.Count += reward.Count
-				ok, err := u.userItemRepository.Update(ctx, tx, userItem)
-				if ok {
-					isUpdate = true
-				}
-				if err != nil {
-					return err
-				}
-				break
+		if userItem, ok := itemMap[reward.ItemID]; ok {
+			// 更新する
+			userItem.Count += reward.Count
+			_, err := u.userItemRepository.Update(ctx, tx, userItem)
+			if err != nil {
+				tx.Rollback()
+				return err
 			}
-		}
-		if !isUpdate {
+		} else {
+			// 持っていないので登録する
 			userItem := IUserItem{
 				UserID: userID,
 				ItemID: reward.ItemID,
 				Count:  reward.Count,
 			}
-
-			// update出来ていなかった場合insertする
 			err := u.userItemRepository.Insert(ctx, tx, &userItem)
 			if err != nil {
+				tx.Rollback()
 				return err
 			}
 		}
 
 	}
+	// すべてうまく行ったらコミット
+	if err := tx.Commit(); err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	return nil
 }
 

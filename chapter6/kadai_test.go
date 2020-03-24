@@ -60,7 +60,7 @@ func TestUserItemService_Provide(t *testing.T) {
 
 		mockUserItemRepository := NewMockIFUserItemRepository(ctrl)
 		mockUserItemRepository.EXPECT().
-			FindByUserIdAndItemIDs(ctx, gomock.Any(), gomock.Any(), gomock.Any()).
+			FindByUserIdAndItemIDs(ctx, gomock.Any(), int64(1), []int64{1, 2}).
 			DoAndReturn(
 				func(ctx1 context.Context, tx1 *sql.Tx, userID int64, itemIDs []int64) (iUserItems []*IUserItem, err error) {
 					// itemIDが1のものだけ持っている想定
@@ -131,7 +131,7 @@ func TestUserItemService_Provide(t *testing.T) {
 
 		mockUserItemRepository := NewMockIFUserItemRepository(ctrl)
 		mockUserItemRepository.EXPECT().
-			FindByUserIdAndItemIDs(ctx, gomock.Any(), gomock.Any(), gomock.Any()).
+			FindByUserIdAndItemIDs(ctx, gomock.Any(), int64(1), []int64{1, 2, 3, 4}).
 			DoAndReturn(
 				func(ctx1 context.Context, tx1 *sql.Tx, userID int64, itemIDs []int64) (iUserItems []*IUserItem, err error) {
 					// itemIDが1のものと3のものを持っている
@@ -234,7 +234,7 @@ func TestUserItemService_Provide(t *testing.T) {
 
 		mockUserItemRepository := NewMockIFUserItemRepository(ctrl)
 		mockUserItemRepository.EXPECT().
-			FindByUserIdAndItemIDs(ctx, gomock.Any(), gomock.Any(), gomock.Any()).
+			FindByUserIdAndItemIDs(ctx, gomock.Any(), int64(1), []int64{1, 2}).
 			DoAndReturn(
 				func(ctx1 context.Context, tx1 *sql.Tx, userID int64, itemIDs []int64) (iUserItems []*IUserItem, err error) {
 					return iUserItems, fmt.Errorf("select error")
@@ -270,7 +270,7 @@ func TestUserItemService_Provide(t *testing.T) {
 
 		mockUserItemRepository := NewMockIFUserItemRepository(ctrl)
 		mockUserItemRepository.EXPECT().
-			FindByUserIdAndItemIDs(ctx, gomock.Any(), gomock.Any(), gomock.Any()).
+			FindByUserIdAndItemIDs(ctx, gomock.Any(), int64(1), []int64{1, 2}).
 			DoAndReturn(
 				func(ctx1 context.Context, tx1 *sql.Tx, userID int64, itemIDs []int64) (iUserItems []*IUserItem, err error) {
 					record := IUserItem{}
@@ -321,7 +321,7 @@ func TestUserItemService_Provide(t *testing.T) {
 
 		mockUserItemRepository := NewMockIFUserItemRepository(ctrl)
 		mockUserItemRepository.EXPECT().
-			FindByUserIdAndItemIDs(ctx, gomock.Any(), gomock.Any(), gomock.Any()).
+			FindByUserIdAndItemIDs(ctx, gomock.Any(), int64(1), []int64{1, 2}).
 			DoAndReturn(
 				func(ctx1 context.Context, tx1 *sql.Tx, userID int64, itemIDs []int64) (iUserItems []*IUserItem, err error) {
 					return iUserItems, nil
