@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -22,19 +21,16 @@ func userFortuneHandler(w http.ResponseWriter, r *http.Request) {
 
 	// リクエストBodyの内容を取得
 	var req model.Request
-	// []byteに変換
-	data, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Println(err.Error())
-		return
-	}
-	err = json.Unmarshal(data, &req)
-	if err != nil {
+
+	dec := json.NewDecoder(r.Body)
+	if err := dec.Decode(&req); err != nil {
 		log.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Println(req)
+
+	// 返ってきたレスポンスの内容を表示
+	fmt.Println(req)
 
 	// レスポンスの作成
 	response := model.Response{
@@ -44,7 +40,7 @@ func userFortuneHandler(w http.ResponseWriter, r *http.Request) {
 
 	var res bytes.Buffer
 	enc := json.NewEncoder(&res)
-	if err = enc.Encode(response); err != nil {
+	if err := enc.Encode(response); err != nil {
 		log.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

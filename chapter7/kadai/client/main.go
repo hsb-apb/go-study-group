@@ -39,7 +39,7 @@ func clientFortune() error {
 	}
 
 	// HTTPリクエストを作成
-	req, err := http.NewRequest("POST", "http://localhost:8080/user_fortune", bytes.NewReader(body.Bytes()))
+	req, err := http.NewRequest("POST", "http://localhost:8080/user_fortune", &body)
 	if err != nil {
 		return err
 	}
